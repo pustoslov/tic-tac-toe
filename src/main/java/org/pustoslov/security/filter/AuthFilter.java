@@ -7,17 +7,16 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.pustoslov.domain.service.UserService;
-import org.pustoslov.web.model.ErrorResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.GenericFilterBean;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+import org.pustoslov.domain.service.UserService;
+import org.pustoslov.web.model.ErrorResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.GenericFilterBean;
 
 public class AuthFilter extends GenericFilterBean {
 
@@ -31,7 +30,7 @@ public class AuthFilter extends GenericFilterBean {
 
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-          throws IOException, ServletException {
+      throws IOException, ServletException {
     HttpServletRequest httpRequest = (HttpServletRequest) request;
     HttpServletResponse httpResponse = (HttpServletResponse) response;
 
@@ -51,15 +50,14 @@ public class AuthFilter extends GenericFilterBean {
       sendErrorResponse(httpResponse, "Authentication failed");
     } else {
       UsernamePasswordAuthenticationToken authentication =
-              new UsernamePasswordAuthenticationToken(userId, null, List.of());
+          new UsernamePasswordAuthenticationToken(userId, null, List.of());
       SecurityContextHolder.getContext().setAuthentication(authentication);
       chain.doFilter(request, response);
     }
-
   }
 
   private String[] extractCredentials(HttpServletRequest request, HttpServletResponse response)
-          throws IOException {
+      throws IOException {
     String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Basic ")) {
       sendErrorResponse(response, "Missing or invalid Authorization header");
@@ -67,8 +65,8 @@ public class AuthFilter extends GenericFilterBean {
     }
 
     String base64Credentials = authHeader.substring("Basic ".length());
-    String credentials = new String(Base64.getDecoder().decode(base64Credentials),
-            StandardCharsets.UTF_8);
+    String credentials =
+        new String(Base64.getDecoder().decode(base64Credentials), StandardCharsets.UTF_8);
 
     String[] values = credentials.split(":", 2);
     if (values.length != 2) {
@@ -89,7 +87,7 @@ public class AuthFilter extends GenericFilterBean {
   private boolean isPublicEndpoint(HttpServletRequest request) {
     String path = request.getRequestURI();
     String method = request.getMethod();
-    return ("/api/v1/auth/signup".equals(path) && "POST".equalsIgnoreCase(method)) ||
-            ("/api/v1/auth/login".equals(path) && "POST".equalsIgnoreCase(method));
+    return ("/api/v1/auth/signup".equals(path) && "POST".equalsIgnoreCase(method))
+        || ("/api/v1/auth/login".equals(path) && "POST".equalsIgnoreCase(method));
   }
 }

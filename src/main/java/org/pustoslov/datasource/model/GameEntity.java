@@ -1,16 +1,15 @@
 package org.pustoslov.datasource.model;
 
 import jakarta.persistence.*;
+import java.util.List;
+import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
 import org.pustoslov.datasource.converter.BoardConverter;
 import org.pustoslov.domain.model.GameStatus;
 
-import java.util.List;
-import java.util.UUID;
-
 @Entity
 @Table(name = "game")
-public class GameEntity{
+public class GameEntity {
   @Id
   @UuidGenerator(style = UuidGenerator.Style.RANDOM)
   @Column(columnDefinition = "UUID", updatable = false, nullable = false)
@@ -35,12 +34,14 @@ public class GameEntity{
 
   public GameEntity() {}
 
-  public GameEntity(UUID id, List<List<Integer>> board,
-                    GameStatus status,
-                    UUID currentTurn,
-                    UUID winner,
-                    UUID xPlayerId,
-                    UUID oPlayerId) {
+  public GameEntity(
+      UUID id,
+      List<List<Integer>> board,
+      GameStatus status,
+      UUID currentTurn,
+      UUID winner,
+      UUID xPlayerId,
+      UUID oPlayerId) {
     this.gameId = id;
     this.board = board;
     this.status = status;

@@ -1,9 +1,9 @@
 package org.pustoslov.datasource.converter;
 
-import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import java.util.List;
 
 @Converter
 public class BoardConverter implements AttributeConverter<List<List<Integer>>, String> {
@@ -22,9 +22,15 @@ public class BoardConverter implements AttributeConverter<List<List<Integer>>, S
   @Override
   public List<List<Integer>> convertToEntityAttribute(String dbData) {
     try {
-      return objectMapper.readValue(dbData,
-              objectMapper.getTypeFactory().constructCollectionType(List.class,
-                      objectMapper.getTypeFactory().constructCollectionType(List.class, Integer.class)));
+      return objectMapper.readValue(
+          dbData,
+          objectMapper
+              .getTypeFactory()
+              .constructCollectionType(
+                  List.class,
+                  objectMapper
+                      .getTypeFactory()
+                      .constructCollectionType(List.class, Integer.class)));
     } catch (Exception e) {
       throw new RuntimeException("Error converting JSON to board", e);
     }

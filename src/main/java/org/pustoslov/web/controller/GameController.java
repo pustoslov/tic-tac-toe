@@ -1,6 +1,9 @@
 package org.pustoslov.web.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.pustoslov.domain.model.Game;
 import org.pustoslov.domain.model.GameMode;
 import org.pustoslov.domain.service.GameService;
@@ -10,10 +13,6 @@ import org.pustoslov.web.model.MoveRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/game")
@@ -29,17 +28,16 @@ public class GameController {
 
   @PostMapping("/{gameId}/move")
   public void makeMove(
-          @Valid @RequestBody MoveRequest request,
-          @PathVariable UUID gameId,
-          Authentication authentication) {
+      @Valid @RequestBody MoveRequest request,
+      @PathVariable UUID gameId,
+      Authentication authentication) {
     UUID userId = (UUID) authentication.getPrincipal();
     gameService.makeMove(gameId, userId, request.row(), request.col());
   }
 
   @PostMapping("/new")
   public ResponseEntity<GameResponse> newGame(
-          @RequestParam String mode,
-          Authentication authentication) {
+      @RequestParam String mode, Authentication authentication) {
     UUID userId = (UUID) authentication.getPrincipal();
     Game newGame = gameService.createGame(userId, GameMode.valueOf(mode.toUpperCase()));
     return ResponseEntity.ok(gameMapper.toDTO(newGame));
@@ -48,7 +46,8 @@ public class GameController {
   @GetMapping("/ongoing")
   public ResponseEntity<List<UUID>> getOngoingGames(Authentication authentication) {
     UUID userId = (UUID) authentication.getPrincipal();
-    return ResponseEntity.ok(gameService.findOngoingGames(userId).stream()
+    return ResponseEntity.ok(
+        gameService.findOngoingGames(userId).stream()
             .map(gameMapper::toDTO)
             .map(GameResponse::gameId)
             .collect(Collectors.toList()));
@@ -57,14 +56,16 @@ public class GameController {
   @GetMapping("/available")
   public ResponseEntity<List<UUID>> getAvailableGames(Authentication authentication) {
     UUID userId = (UUID) authentication.getPrincipal();
-    return ResponseEntity.ok(gameService.findAvailableGames(userId).stream()
+    return ResponseEntity.ok(
+        gameService.findAvailableGames(userId).stream()
             .map(gameMapper::toDTO)
             .map(GameResponse::gameId)
             .collect(Collectors.toList()));
   }
 
   @PostMapping("/{gameId}/join")
-  public ResponseEntity<GameResponse> joinGame(@PathVariable UUID gameId, Authentication authentication) {
+  public ResponseEntity<GameResponse> joinGame(
+      @PathVariable UUID gameId, Authentication authentication) {
     UUID userId = (UUID) authentication.getPrincipal();
     GameResponse response = gameMapper.toDTO(gameService.joinGame(gameId, userId));
     return ResponseEntity.ok(response);
@@ -76,4 +77,3 @@ public class GameController {
     return ResponseEntity.ok(response);
   }
 }
-

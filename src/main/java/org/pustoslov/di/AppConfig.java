@@ -13,8 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class AppConfig {
 
   @Bean
-  public GameService gameService(GameRepository gameRepository, UserRepository userRepository,
-                                 GameDatasourceMapper mapper, TicTacToeEngine engine) {
+  public GameService gameService(
+      GameRepository gameRepository,
+      UserRepository userRepository,
+      GameDatasourceMapper mapper,
+      TicTacToeEngine engine) {
     return new GameServiceImpl(gameRepository, userRepository, mapper, engine);
   }
 

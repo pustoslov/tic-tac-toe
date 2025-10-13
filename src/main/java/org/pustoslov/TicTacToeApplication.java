@@ -9,4 +9,3 @@ public class TicTacToeApplication {
     SpringApplication.run(TicTacToeApplication.class, args);
   }
 }
-

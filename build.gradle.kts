@@ -2,6 +2,8 @@ plugins {
     id("java")
     id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.4"
+    id("com.diffplug.spotless") version "6.25.0"
+
 }
 
 group = "org.pustoslov"
@@ -23,6 +25,16 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+spotless {
+    java {
+        target("src/**/*.java")
+
+        removeUnusedImports()
+        googleJavaFormat()
+        importOrder()
+    }
 }
 
 tasks.test {

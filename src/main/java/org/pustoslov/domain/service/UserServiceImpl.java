@@ -1,14 +1,13 @@
 package org.pustoslov.domain.service;
 
+import java.util.Optional;
+import java.util.UUID;
 import org.pustoslov.datasource.model.UserEntity;
 import org.pustoslov.datasource.repository.UserRepository;
 import org.pustoslov.web.model.CredentialsRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Optional;
-import java.util.UUID;
-
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
@@ -47,7 +46,9 @@ public class UserServiceImpl implements UserService{
 
   @Override
   public String findUserById(UUID userId) {
-    UserEntity entity = userRepository.findById(userId)
+    UserEntity entity =
+        userRepository
+            .findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("No user with id: " + userId));
     return entity.getUsername();
   }

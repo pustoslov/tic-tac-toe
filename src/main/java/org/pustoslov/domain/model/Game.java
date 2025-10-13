@@ -17,13 +17,14 @@ public class Game {
     this.status = GameStatus.WAITING;
   }
 
-  public Game(UUID id,
-              Board board,
-              GameStatus status,
-              UUID currentTurn,
-              UUID winner,
-              UUID xPlayerId,
-              UUID oPlayerId) {
+  public Game(
+      UUID id,
+      Board board,
+      GameStatus status,
+      UUID currentTurn,
+      UUID winner,
+      UUID xPlayerId,
+      UUID oPlayerId) {
     this.id = id;
     this.board = board;
     this.status = status;
@@ -88,7 +89,4 @@ public class Game {
   public void setWinner(UUID winner) {
     this.winner = winner;
   }
-
 }
-
-

@@ -1,5 +1,8 @@
 package org.pustoslov.domain.service;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.pustoslov.datasource.mapper.GameDatasourceMapper;
 import org.pustoslov.datasource.model.GameEntity;
 import org.pustoslov.datasource.model.UserEntity;
@@ -10,20 +13,17 @@ import org.pustoslov.domain.exception.IllegalMoveException;
 import org.pustoslov.domain.exception.NoAccessException;
 import org.pustoslov.domain.model.*;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 public class GameServiceImpl implements GameService {
   private final GameRepository gameRepository;
   private final UserRepository userRepository;
   private final GameDatasourceMapper gameDatasourceMapper;
   private final TicTacToeEngine ticTacToeEngine;
 
-  public GameServiceImpl(GameRepository gameRepository,
-                         UserRepository userRepository,
-                         GameDatasourceMapper gameDatasourceMapper,
-                         TicTacToeEngine ticTacToeEngine) {
+  public GameServiceImpl(
+      GameRepository gameRepository,
+      UserRepository userRepository,
+      GameDatasourceMapper gameDatasourceMapper,
+      TicTacToeEngine ticTacToeEngine) {
     this.gameRepository = gameRepository;
     this.userRepository = userRepository;
     this.gameDatasourceMapper = gameDatasourceMapper;
@@ -32,7 +32,9 @@ public class GameServiceImpl implements GameService {
 
   @Override
   public Game createGame(UUID userId, GameMode mode) {
-    UserEntity user = userRepository.findById(userId)
+    UserEntity user =
+        userRepository
+            .findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
     Game game = new Game();
@@ -51,9 +53,10 @@ public class GameServiceImpl implements GameService {
 
   @Override
   public Game findGameById(UUID gameId) {
-    return gameDatasourceMapper.toDomain(gameRepository.findById(gameId)
-            .orElseThrow(() -> new GameNotFoundException("There is no game with id: "
-                    + gameId)));
+    return gameDatasourceMapper.toDomain(
+        gameRepository
+            .findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException("There is no game with id: " + gameId)));
   }
 
   @Override
@@ -78,8 +81,7 @@ public class GameServiceImpl implements GameService {
       UUID next = userId.equals(game.getXPlayerId()) ? game.getOPlayerId() : game.getXPlayerId();
       game.setCurrentTurn(next);
 
-      if (game.getOPlayerId() != null
-              && game.getOPlayerId().toString().startsWith("00000000")) {
+      if (game.getOPlayerId() != null && game.getOPlayerId().toString().startsWith("00000000")) {
         ticTacToeEngine.makeMove(game);
         int winnerAfterBot = ticTacToeEngine.checkWinner(game.getBoard());
         if (winnerAfterBot != 0) {
@@ -92,7 +94,6 @@ public class GameServiceImpl implements GameService {
           game.setCurrentTurn(userId);
         }
       }
-
     }
 
     gameRepository.save(gameDatasourceMapper.toDataEntity(game));
@@ -101,19 +102,19 @@ public class GameServiceImpl implements GameService {
   @Override
   public List<Game> findAvailableGames(UUID userId) {
     return gameRepository.findByoPlayerIdIsNull().stream()
-            .filter(entity -> !entity.getxPlayerId().equals(userId))
-            .map(gameDatasourceMapper::toDomain)
-            .collect(Collectors.toList());
+        .filter(entity -> !entity.getxPlayerId().equals(userId))
+        .map(gameDatasourceMapper::toDomain)
+        .collect(Collectors.toList());
   }
 
   @Override
   public List<Game> findOngoingGames(UUID userId) {
     List<GameEntity> entities = gameRepository.findGameByParticipant(userId);
     return entities.stream()
-            .filter(entity -> entity.getStatus() != GameStatus.WIN && entity.getStatus()
-                    != GameStatus.DRAW)
-            .map(gameDatasourceMapper::toDomain)
-            .toList();
+        .filter(
+            entity -> entity.getStatus() != GameStatus.WIN && entity.getStatus() != GameStatus.DRAW)
+        .map(gameDatasourceMapper::toDomain)
+        .toList();
   }
 
   @Override
@@ -122,7 +123,9 @@ public class GameServiceImpl implements GameService {
     if (game.getOPlayerId() != null) {
       throw new IllegalStateException("Game already has 2 players");
     }
-    UserEntity user = userRepository.findById(userId)
+    UserEntity user =
+        userRepository
+            .findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
     game.setOPlayerId(user.getId());
     game.setStatus(GameStatus.TURN);
@@ -132,25 +135,20 @@ public class GameServiceImpl implements GameService {
   }
 
   public void validateMove(int row, int col, UUID userId, Game game) {
-    if (game.getOPlayerId() == null)
-      throw new IllegalMoveException("Game not started yet.");
+    if (game.getOPlayerId() == null) throw new IllegalMoveException("Game not started yet.");
     if (!game.getOPlayerId().equals(userId) && !game.getXPlayerId().equals(userId))
       throw new NoAccessException("You have no access to this game");
-    if (isGameOver(game))
-      throw new IllegalMoveException("Game is over.");
-    if (!game.getCurrentTurn().equals(userId))
-      throw new IllegalMoveException("Not your turn");
+    if (isGameOver(game)) throw new IllegalMoveException("Game is over.");
+    if (!game.getCurrentTurn().equals(userId)) throw new IllegalMoveException("Not your turn");
     if (game.getBoard().getCell(row, col) != 0)
       throw new IllegalMoveException("You can't override cell.");
   }
 
   public boolean isGameOver(Game game) {
-    if (game.getStatus() == GameStatus.DRAW ||
-    game.getStatus() == GameStatus.WIN) return true;
+    if (game.getStatus() == GameStatus.DRAW || game.getStatus() == GameStatus.WIN) return true;
     Board board = game.getBoard();
     int winner = ticTacToeEngine.checkWinner(board);
     if (winner != 0) return true;
     return ticTacToeEngine.isBoardFull(board);
   }
-
 }

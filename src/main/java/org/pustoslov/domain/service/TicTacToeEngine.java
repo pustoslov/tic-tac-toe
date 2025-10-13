@@ -70,34 +70,33 @@ public class TicTacToeEngine {
           }
         }
       }
-
     }
     return bestValue;
   }
 
   public int checkWinner(Board board) {
     for (int i = 0; i < Board.SIZE; i++) {
-      if (board.getCell(i, 0) != EMPTY &&
-              board.getCell(i, 0) == board.getCell(i, 1) &&
-              board.getCell(i, 1) == board.getCell(i, 2)) {
+      if (board.getCell(i, 0) != EMPTY
+          && board.getCell(i, 0) == board.getCell(i, 1)
+          && board.getCell(i, 1) == board.getCell(i, 2)) {
         return board.getCell(i, 0);
       }
-      if (board.getCell(0, i) != EMPTY &&
-              board.getCell(0, i) == board.getCell(1, i) &&
-              board.getCell(1, i) == board.getCell(2, i)) {
+      if (board.getCell(0, i) != EMPTY
+          && board.getCell(0, i) == board.getCell(1, i)
+          && board.getCell(1, i) == board.getCell(2, i)) {
         return board.getCell(0, i);
       }
     }
 
-    if (board.getCell(0, 0) != EMPTY &&
-            board.getCell(0, 0) == board.getCell(1, 1) &&
-            board.getCell(1, 1) == board.getCell(2, 2)) {
+    if (board.getCell(0, 0) != EMPTY
+        && board.getCell(0, 0) == board.getCell(1, 1)
+        && board.getCell(1, 1) == board.getCell(2, 2)) {
       return board.getCell(0, 0);
     }
 
-    if (board.getCell(0, 2) != EMPTY &&
-            board.getCell(0, 2) == board.getCell(1, 1) &&
-            board.getCell(1, 1) == board.getCell(2, 0)) {
+    if (board.getCell(0, 2) != EMPTY
+        && board.getCell(0, 2) == board.getCell(1, 1)
+        && board.getCell(1, 1) == board.getCell(2, 0)) {
       return board.getCell(0, 2);
     }
 
@@ -119,6 +118,4 @@ public class TicTacToeEngine {
     int[] move = getBestMove(game.getBoard());
     game.getBoard().setCell(move[0], move[1], O);
   }
-
-
 }

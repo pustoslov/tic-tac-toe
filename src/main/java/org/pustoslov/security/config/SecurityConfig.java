@@ -25,13 +25,10 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     AuthFilter authFilter = new AuthFilter(userService, objectMapper);
-    http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/auth/**").permitAll()
-                    .anyRequest().authenticated()
-            )
-            .addFilterBefore(authFilter, AuthorizationFilter.class);
+    http.csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(
+            auth -> auth.requestMatchers("/auth/**").permitAll().anyRequest().authenticated())
+        .addFilterBefore(authFilter, AuthorizationFilter.class);
 
     return http.build();
   }
