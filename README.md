@@ -128,12 +128,16 @@ This API uses Basic Auth. All endpoints except `/auth/signup` and `/auth/login` 
       "oPlayerId": "14887174-33ec-4edc-9a15-9da76bbb8d87",
       "currentTurnId": "14887174-33ec-4edc-9a15-9da76bbb8d87",
       "board": [
-    	[1, 1, -1], // 1 stands for 'X'
-        [0, -1, 0], // -1 stands for 'O'
-        [1, 0, 0]   // 0 stands for empty
+    	[1, 1, -1],
+        [0, -1, 0],
+        [1, 0, 0]
       ]
     }
     ```
+    **In `board`:**
+    - **1** stands for **'X'**
+    - **-1** stands for **'O'**
+    - **0** stands for **empty**
 
 - **`UserDataResponse`**:
   ```json
