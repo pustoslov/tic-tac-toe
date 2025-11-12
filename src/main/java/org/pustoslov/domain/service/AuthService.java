@@ -11,7 +11,5 @@ public interface AuthService {
 
   JwtResponse getNewAccessToken(String refreshToken);
 
-  JwtResponse getNewRefreshToken(String refreshToken);
-
   JwtAuthentication getAuthInfo();
 }

@@ -38,11 +38,4 @@ public class AuthController {
     JwtResponse response = authService.getNewAccessToken(request.refreshToken());
     return ResponseEntity.ok(response);
   }
-
-  @PostMapping("/update_refresh_token")
-  public ResponseEntity<JwtResponse> updateRefreshToken(
-      @Valid @RequestBody RefreshJwtRequest request) {
-    JwtResponse response = authService.getNewRefreshToken(request.refreshToken());
-    return ResponseEntity.ok(response);
-  }
 }

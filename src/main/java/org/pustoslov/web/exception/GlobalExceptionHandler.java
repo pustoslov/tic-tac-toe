@@ -63,10 +63,4 @@ public class GlobalExceptionHandler {
     String message = "Parameter '" + ex.getParameterName() + "' is required";
     return ResponseEntity.badRequest().body(new ErrorResponse("Missing parameter", message));
   }
-
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
-    ErrorResponse response = new ErrorResponse("Internal server error", ex.getMessage());
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-  }
 }

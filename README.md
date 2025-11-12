@@ -72,7 +72,7 @@ http://localhost:8080/api/v1
 
 ### Authentication
 
-This API uses Basic Auth. All endpoints except `/auth/signup` and `/auth/login` require Basic Auth header.
+This API uses JWT Auth. All endpoints except `/auth/**` require Bearer Token header.
 
 
 ### Available Endpoints

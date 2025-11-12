@@ -50,17 +50,6 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public JwtResponse getNewRefreshToken(String refreshToken) {
-    if (jwtProvider.validateRefreshToken(refreshToken)) {
-      UUID uuid = jwtProvider.getUuidFromRefreshToken(refreshToken);
-      User user = userService.findUserById(uuid);
-      String accessToken = jwtProvider.generateAccessToken(user);
-      String newRefreshToken = jwtProvider.generateRefreshToken(user);
-      return new JwtResponse("Bearer", accessToken, newRefreshToken);
-    } else throw new AuthenticationException("Invalid or expired refresh token.");
-  }
-
-  @Override
   public JwtAuthentication getAuthInfo() {
     return getAuthInfoSafely()
         .orElseThrow(() -> new AuthenticationException("User not authenticated"));
