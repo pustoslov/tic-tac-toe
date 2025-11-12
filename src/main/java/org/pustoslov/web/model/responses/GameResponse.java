@@ -1,4 +1,4 @@
-package org.pustoslov.web.model;
+package org.pustoslov.web.model.responses;
 
 import java.time.Instant;
 import java.util.List;

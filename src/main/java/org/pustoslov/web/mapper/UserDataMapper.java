@@ -1,7 +1,7 @@
 package org.pustoslov.web.mapper;
 
 import org.pustoslov.domain.model.User;
-import org.pustoslov.web.model.UserDataResponse;
+import org.pustoslov.web.model.responses.UserDataResponse;
 import org.springframework.stereotype.Component;
 
 @Component

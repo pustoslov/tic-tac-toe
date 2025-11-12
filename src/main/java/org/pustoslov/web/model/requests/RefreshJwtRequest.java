@@ -1,4 +1,4 @@
-package org.pustoslov.web.model;
+package org.pustoslov.web.model.requests;
 
 import jakarta.validation.constraints.NotBlank;
 

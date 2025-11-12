@@ -10,7 +10,7 @@ import org.pustoslov.domain.exception.UserAlreadyExists;
 import org.pustoslov.domain.model.Role;
 import org.pustoslov.domain.model.RoleName;
 import org.pustoslov.domain.model.User;
-import org.pustoslov.web.model.JwtRequest;
+import org.pustoslov.web.model.requests.JwtRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

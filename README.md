@@ -95,13 +95,45 @@ This API uses JWT Auth. All endpoints except `/auth/**` require Bearer Token hea
 
 #### User Management
 
-| Method | Endpoint | Description | Parameters | Response | Status Codes |
-|--------|----------|-------------|------------|----------|--------------|
-| **GET** | `/user/{userId}` | Get user data | `userId` (path) - User UUID | `UserDataResponse` | 200 - Success<br>404 - User not found |
-| **POST** | `/auth/signup` | User registration | `CredentialsRequest` | None | 200 - Success<br>409 - User already exists<br>400 - Validation error |
-| **POST** | `/auth/login` | User login | `CredentialsRequest` | None | 200 - Success<br>401 - Invalid credentials<br>400 - Validation error |
+| Method  | Endpoint         | Description             | Parameters                        | Response                    | Status Codes                                                     |
+|---------|------------------|-------------------------|-----------------------------------|-----------------------------|------------------------------------------------------------------|
+| **GET** | `/user/{userId}` | Get user data by id     | `userId` (path) - User UUID       | `UserDataResponse`          | 200 - Success<br>404 - User not found<br>401 - Unauthorized      |
+| **GET** | `/user/me`       | Get current user data   | None                              | `UserDataResponse`          | 200 - Success<br>401 - Unauthorized                              |
+| **GET** | `/user/top`      | Get list of top players | `limit` (path) - Count of records | `List<RatingStatsResponse>` | 200 - Success<br>401 - Unauthorized<br>400 - Invalid linit value |
+
+#### Auth Management
+
+| Method   | Endpoint                    | Description         | Parameters | Response      | Status Codes                                 |
+|----------|-----------------------------|---------------------|------------|---------------|----------------------------------------------|
+| **POST** | `/auth/signup`              | Sign up             | None       | None          | 200 - Success<br>422 - User already exists   |
+| **POST** | `/auth/login`               | Log in              | None       | None          | 200 - Success<br><br>401 - Validation error  |
+| **POST** | `/auth/update_access_token` | Update access token | None       | `JwtResponse` | 200 - Success<br><br>401 - Validation error  |
 
 ### Request/Response Models
+
+- **`JwtRequest`**:
+    ```json
+    {
+      "userName": "john_doe",
+      "password": "securePassword123"
+    }
+    ```
+- **`JwtResponse`**:
+  ```json
+   {
+      "type": "Bearer",
+      "accessToken": "qwertyGeneratedAccessTokenHere1234",
+      "refreshToken": "ytrewqGeneratedRefreshTokenHere4321"
+   }
+  ```
+
+- **`RefreshJwtRequest`**:
+  ```json
+   {
+      "refreshToken": "ytrewqGeneratedRefreshTokenHere4321"
+   }
+  ```
+
 
 - **`MoveRequest`**:
 
@@ -109,14 +141,6 @@ This API uses JWT Auth. All endpoints except `/auth/**` require Bearer Token hea
     {
       "row": 2,
       "col": 3
-    }
-    ```
-
-- **`CredentialsRequest`**:
-    ```json
-    {
-      "userName": "john_doe",
-      "password": "securePassword123"
     }
     ```
 
@@ -138,18 +162,26 @@ This API uses JWT Auth. All endpoints except `/auth/**` require Bearer Token hea
     - **1** stands for **'X'**
     - **-1** stands for **'O'**
     - **0** stands for **empty**
-
+    - 
+- **`RatingStatsResponse`**:
+  ```json
+   {
+      "id": "abcdefgh-jklm-nopq-12rs-tuvw3456789x",
+      "winRation": "3.14"
+   }
+  ```
 - **`UserDataResponse`**:
   ```json
-  {
-    "username": "guest"
-  }
+   {
+      "id": "abcdefgh-jklm-nopq-12rs-tuvw3456789x",
+      "login": "guest"
+   }
   ```
 
 - **`ErrorResponse`**:
   ```json
   {
-	"error": "Illegal move",
+    "error": "Illegal move",
     "message": "Not your turn"
   }
   ```

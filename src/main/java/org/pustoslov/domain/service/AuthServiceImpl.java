@@ -6,8 +6,8 @@ import org.pustoslov.config.jwt.JwtProvider;
 import org.pustoslov.config.security.JwtAuthentication;
 import org.pustoslov.domain.exception.AuthenticationException;
 import org.pustoslov.domain.model.User;
-import org.pustoslov.web.model.JwtRequest;
-import org.pustoslov.web.model.JwtResponse;
+import org.pustoslov.web.model.requests.JwtRequest;
+import org.pustoslov.web.model.responses.JwtResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 

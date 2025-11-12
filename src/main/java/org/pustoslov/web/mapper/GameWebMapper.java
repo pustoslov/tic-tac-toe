@@ -3,7 +3,7 @@ package org.pustoslov.web.mapper;
 import java.util.Arrays;
 import java.util.List;
 import org.pustoslov.domain.model.Game;
-import org.pustoslov.web.model.GameResponse;
+import org.pustoslov.web.model.responses.GameResponse;
 import org.springframework.stereotype.Component;
 
 @Component

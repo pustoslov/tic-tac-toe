@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.pustoslov.config.jwt.JwtProvider;
 import org.pustoslov.config.jwt.JwtUtil;
-import org.pustoslov.web.model.ErrorResponse;
+import org.pustoslov.web.model.responses.ErrorResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 

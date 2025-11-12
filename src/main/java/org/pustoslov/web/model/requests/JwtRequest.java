@@ -1,15 +1,15 @@
-package org.pustoslov.web.model;
+package org.pustoslov.web.model.requests;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record CredentialsRequest(
+public record JwtRequest(
     @NotNull
         @NotBlank(message = "Username is mandatory")
         @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters")
-        String userName,
+        String login,
     @NotNull
         @NotBlank(message = "Password is mandatory")
         @Size(min = 8, message = "Password must be at least 8 characters")

@@ -1,7 +1,7 @@
 package org.pustoslov.web.exception;
 
 import org.pustoslov.domain.exception.*;
-import org.pustoslov.web.model.ErrorResponse;
+import org.pustoslov.web.model.responses.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<ErrorResponse> handleAuthException(AuthenticationException ex) {
     ErrorResponse response = new ErrorResponse("Authentication exception", ex.getMessage());
-    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
   }
 
   @ExceptionHandler(NoAccessException.class)
