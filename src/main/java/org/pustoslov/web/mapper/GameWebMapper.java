@@ -16,6 +16,11 @@ public class GameWebMapper {
         Arrays.stream(matrix).map(row -> Arrays.stream(row).boxed().toList()).toList();
 
     return new GameResponse(
-        game.getId(), game.getXPlayerId(), game.getOPlayerId(), game.getCurrentTurn(), boardList);
+        game.getId(),
+        game.getTimestamp(),
+        game.getXPlayerId(),
+        game.getOPlayerId(),
+        game.getCurrentTurn(),
+        boardList);
   }
 }

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.pustoslov.domain.exception.IllegalRequestParameter;
 import org.pustoslov.domain.model.Game;
 import org.pustoslov.domain.model.GameMode;
 import org.pustoslov.domain.service.GameService;
@@ -12,10 +13,12 @@ import org.pustoslov.web.model.GameResponse;
 import org.pustoslov.web.model.MoveRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/game")
+@Validated
 public class GameController {
 
   private final GameService gameService;
@@ -39,7 +42,13 @@ public class GameController {
   public ResponseEntity<GameResponse> newGame(
       @RequestParam String mode, Authentication authentication) {
     UUID userId = (UUID) authentication.getPrincipal();
-    Game newGame = gameService.createGame(userId, GameMode.valueOf(mode.toUpperCase()));
+    GameMode gameMode;
+    try {
+      gameMode = GameMode.valueOf(mode.toUpperCase());
+    } catch (IllegalArgumentException e) {
+      throw new IllegalRequestParameter("'mode' must be 'pve' or 'pvp'");
+    }
+    Game newGame = gameService.createGame(userId, gameMode);
     return ResponseEntity.ok(gameMapper.toDTO(newGame));
   }
 
@@ -76,4 +85,17 @@ public class GameController {
     GameResponse response = gameMapper.toDTO(gameService.findGameById(gameId));
     return ResponseEntity.ok(response);
   }
+
+  @GetMapping("/finished")
+  public ResponseEntity<List<GameResponse>> getFinishedGames(Authentication authentication) {
+    UUID id = (UUID) authentication.getPrincipal();
+    return ResponseEntity.ok(
+        gameService.findFinishedGamesById(id).stream().map(gameMapper::toDTO).toList());
+  }
+
+  //  @ExceptionHandler(IllegalArgumentException.class)
+  //  public ResponseEntity<ErrorResponse> handleTypeMismatch(IllegalArgumentException ex) {
+  //    String message = "Argument type mismatch";
+  //    return ResponseEntity.badRequest().body(new ErrorResponse("Illegal argument", message));
+  //  }
 }

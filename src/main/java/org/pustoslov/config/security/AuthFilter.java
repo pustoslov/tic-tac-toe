@@ -1,6 +1,7 @@
-package org.pustoslov.security.filter;
+package org.pustoslov.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -8,23 +9,21 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
-import org.pustoslov.domain.service.UserService;
+import org.pustoslov.config.jwt.JwtProvider;
+import org.pustoslov.config.jwt.JwtUtil;
 import org.pustoslov.web.model.ErrorResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 public class AuthFilter extends GenericFilterBean {
 
-  private final UserService userService;
+  private final JwtProvider jwtProvider;
+  private final JwtUtil jwtUtil;
   private final ObjectMapper objectMapper;
 
-  public AuthFilter(UserService userService, ObjectMapper objectMapper) {
-    this.userService = userService;
+  public AuthFilter(JwtProvider jwtProvider, JwtUtil jwtUtil, ObjectMapper objectMapper) {
+    this.jwtProvider = jwtProvider;
+    this.jwtUtil = jwtUtil;
     this.objectMapper = objectMapper;
   }
 
@@ -39,48 +38,42 @@ public class AuthFilter extends GenericFilterBean {
       return;
     }
 
-    String[] credentials = extractCredentials(httpRequest, httpResponse);
-    if (credentials == null) {
+    String token = extractToken(httpRequest, httpResponse);
+    if (token == null) {
       return;
     }
 
-    UUID userId = userService.authenticate(credentials[0], credentials[1]);
+    if (!jwtProvider.validateAccessToken(token)) {
+      sendErrorResponse(httpResponse, "Invalid or expired access token");
+      return;
+    }
 
-    if (userId == null) {
-      sendErrorResponse(httpResponse, "Authentication failed");
-    } else {
-      UsernamePasswordAuthenticationToken authentication =
-          new UsernamePasswordAuthenticationToken(userId, null, List.of());
+    try {
+      Claims claims = jwtProvider.parseToken(token);
+      JwtAuthentication authentication = jwtUtil.generateAuth(claims);
       SecurityContextHolder.getContext().setAuthentication(authentication);
       chain.doFilter(request, response);
+    } catch (Exception e) {
+      sendErrorResponse(httpResponse, "Failed to process JWT token");
+    } finally {
+      SecurityContextHolder.clearContext();
     }
   }
 
-  private String[] extractCredentials(HttpServletRequest request, HttpServletResponse response)
+  private String extractToken(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
     String authHeader = request.getHeader("Authorization");
-    if (authHeader == null || !authHeader.startsWith("Basic ")) {
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       sendErrorResponse(response, "Missing or invalid Authorization header");
       return null;
     }
-
-    String base64Credentials = authHeader.substring("Basic ".length());
-    String credentials =
-        new String(Base64.getDecoder().decode(base64Credentials), StandardCharsets.UTF_8);
-
-    String[] values = credentials.split(":", 2);
-    if (values.length != 2) {
-      sendErrorResponse(response, "Invalid Basic Auth format");
-      return null;
-    }
-
-    return values;
+    return authHeader.substring("Bearer ".length());
   }
 
   private void sendErrorResponse(HttpServletResponse response, String message) throws IOException {
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     response.setContentType("application/json");
-    ErrorResponse error = new ErrorResponse("Authentification error", message);
+    ErrorResponse error = new ErrorResponse("Authentication error", message);
     objectMapper.writeValue(response.getWriter(), error);
   }
 
@@ -88,6 +81,8 @@ public class AuthFilter extends GenericFilterBean {
     String path = request.getRequestURI();
     String method = request.getMethod();
     return ("/api/v1/auth/signup".equals(path) && "POST".equalsIgnoreCase(method))
-        || ("/api/v1/auth/login".equals(path) && "POST".equalsIgnoreCase(method));
+        || ("/api/v1/auth/login".equals(path) && "POST".equalsIgnoreCase(method))
+        || ("/api/v1/auth/update_access_token".equals(path) && "POST".equalsIgnoreCase(method))
+        || ("/api/v1/auth/update_refresh_token".equals(path) && "POST".equalsIgnoreCase(method));
   }
 }

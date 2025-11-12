@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import org.pustoslov.domain.model.Game;
 import org.pustoslov.domain.model.GameMode;
+import org.pustoslov.domain.model.RatingStats;
 
 public interface GameService {
   Game createGame(UUID userId, GameMode mode);
@@ -17,4 +18,8 @@ public interface GameService {
   Game joinGame(UUID gameId, UUID userId);
 
   Game findGameById(UUID gameId);
+
+  List<Game> findFinishedGamesById(UUID id);
+
+  List<RatingStats> getTopPlayers(int limit);
 }

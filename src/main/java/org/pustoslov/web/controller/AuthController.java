@@ -1,9 +1,10 @@
 package org.pustoslov.web.controller;
 
 import jakarta.validation.Valid;
-import org.pustoslov.domain.service.UserService;
-import org.pustoslov.web.model.CredentialsRequest;
-import org.springframework.http.HttpStatus;
+import org.pustoslov.domain.service.AuthService;
+import org.pustoslov.web.model.JwtRequest;
+import org.pustoslov.web.model.JwtResponse;
+import org.pustoslov.web.model.RefreshJwtRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,29 +14,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-  private final UserService userService;
+  private final AuthService authService;
 
-  public AuthController(UserService userService) {
-    this.userService = userService;
+  public AuthController(AuthService authService) {
+    this.authService = authService;
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<Void> signUp(@Valid @RequestBody CredentialsRequest request) {
-    boolean success = userService.signUp(request);
-    if (success) {
-      return ResponseEntity.ok().build();
-    } else {
-      return ResponseEntity.status(HttpStatus.CONFLICT).build();
-    }
+  public ResponseEntity<JwtResponse> signUp(@Valid @RequestBody JwtRequest request) {
+    JwtResponse response = authService.signUp(request);
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/login")
-  public ResponseEntity<Void> login(@Valid @RequestBody CredentialsRequest request) {
-    boolean success = userService.authenticate(request.userName(), request.password()) != null;
-    if (success) {
-      return ResponseEntity.ok().build();
-    } else {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
+  public ResponseEntity<JwtResponse> login(@Valid @RequestBody JwtRequest request) {
+    JwtResponse response = authService.login(request);
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/update_access_token")
+  public ResponseEntity<JwtResponse> updateAccessToken(
+      @Valid @RequestBody RefreshJwtRequest request) {
+    JwtResponse response = authService.getNewAccessToken(request.refreshToken());
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/update_refresh_token")
+  public ResponseEntity<JwtResponse> updateRefreshToken(
+      @Valid @RequestBody RefreshJwtRequest request) {
+    JwtResponse response = authService.getNewRefreshToken(request.refreshToken());
+    return ResponseEntity.ok(response);
   }
 }

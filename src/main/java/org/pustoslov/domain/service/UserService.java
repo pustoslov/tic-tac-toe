@@ -1,12 +1,13 @@
 package org.pustoslov.domain.service;
 
 import java.util.UUID;
-import org.pustoslov.web.model.CredentialsRequest;
+import org.pustoslov.domain.model.User;
+import org.pustoslov.web.model.JwtRequest;
 
 public interface UserService {
-  boolean signUp(CredentialsRequest request);
+  User signUp(JwtRequest request);
 
-  UUID authenticate(String userName, String password);
+  User authenticate(String username, String password);
 
-  String findUserById(UUID userId);
+  User findUserById(UUID userId);
 }

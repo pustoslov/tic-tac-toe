@@ -21,6 +21,7 @@ public class GameDatasourceMapper {
       entity =
           new GameEntity(
               game.getId(),
+              game.getTimestamp(),
               boardList,
               game.getStatus(),
               game.getCurrentTurn(),
@@ -35,19 +36,9 @@ public class GameDatasourceMapper {
       entity.setWinner(game.getWinner());
       entity.setxPlayerId(game.getXPlayerId());
       entity.setoPlayerId(game.getOPlayerId());
+      entity.setTimestamp(game.getTimestamp());
     }
 
-    return entity;
-  }
-
-  public GameEntity toDataEntity(Board board) {
-    int[][] matrix = board.getMatrix();
-
-    List<List<Integer>> boardList =
-        Arrays.stream(matrix).map(row -> Arrays.stream(row).boxed().toList()).toList();
-
-    GameEntity entity = new GameEntity();
-    entity.setBoard(boardList);
     return entity;
   }
 
@@ -64,6 +55,7 @@ public class GameDatasourceMapper {
         entity.getCurrentTurn(),
         entity.getWinner(),
         entity.getxPlayerId(),
-        entity.getoPlayerId());
+        entity.getoPlayerId(),
+        entity.getTimestamp());
   }
 }

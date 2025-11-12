@@ -1,11 +1,11 @@
 package org.pustoslov.datasource.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
+import org.pustoslov.domain.model.RoleName;
 
 @Entity
 @Table(name = "users")
@@ -21,11 +21,20 @@ public class UserEntity {
   @Column(name = "password", nullable = false)
   private String password;
 
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(
+      name = "user_roles",
+      joinColumns = @JoinColumn(name = "user_name", referencedColumnName = "user_name"))
+  @Column(name = "role_name", length = 50)
+  @Enumerated(EnumType.STRING)
+  private Set<RoleName> roleNames;
+
   public UserEntity() {}
 
-  public UserEntity(String username, String password) {
+  public UserEntity(String username, String password, Set<RoleName> roleNames) {
     this.username = username;
     this.password = password;
+    this.roleNames = roleNames != null ? new HashSet<>(roleNames) : new HashSet<>();
   }
 
   public String getPassword() {
@@ -50,5 +59,9 @@ public class UserEntity {
 
   public void setId(UUID id) {
     this.id = id;
+  }
+
+  public Set<RoleName> getRoleNames() {
+    return roleNames;
   }
 }

@@ -1,13 +1,15 @@
 package org.pustoslov.domain.model;
 
+import java.time.Instant;
 import java.util.UUID;
 
 public class Game {
   private UUID id;
-  private Board board;
+  private final Board board;
   private GameStatus status;
   private UUID currentTurn;
   private UUID winner;
+  private final Instant timestamp;
 
   private UUID xPlayerId;
   private UUID oPlayerId;
@@ -15,6 +17,7 @@ public class Game {
   public Game() {
     this.board = new Board();
     this.status = GameStatus.WAITING;
+    this.timestamp = Instant.now();
   }
 
   public Game(
@@ -24,7 +27,8 @@ public class Game {
       UUID currentTurn,
       UUID winner,
       UUID xPlayerId,
-      UUID oPlayerId) {
+      UUID oPlayerId,
+      Instant timestamp) {
     this.id = id;
     this.board = board;
     this.status = status;
@@ -32,14 +36,11 @@ public class Game {
     this.winner = winner;
     this.xPlayerId = xPlayerId;
     this.oPlayerId = oPlayerId;
+    this.timestamp = timestamp;
   }
 
   public UUID getId() {
     return id;
-  }
-
-  public void setId(UUID id) {
-    this.id = id;
   }
 
   public GameStatus getStatus() {
@@ -70,10 +71,6 @@ public class Game {
     return board;
   }
 
-  public void setBoard(Board board) {
-    this.board = board;
-  }
-
   public UUID getCurrentTurn() {
     return currentTurn;
   }
@@ -88,5 +85,9 @@ public class Game {
 
   public void setWinner(UUID winner) {
     this.winner = winner;
+  }
+
+  public Instant getTimestamp() {
+    return timestamp;
   }
 }

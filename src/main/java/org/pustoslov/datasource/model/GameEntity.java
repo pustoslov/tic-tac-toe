@@ -1,6 +1,7 @@
 package org.pustoslov.datasource.model;
 
 import jakarta.persistence.*;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
@@ -15,10 +16,14 @@ public class GameEntity {
   @Column(columnDefinition = "UUID", updatable = false, nullable = false)
   private UUID gameId;
 
+  @Column(name = "creation_timestamp")
+  private Instant timestamp;
+
   @Convert(converter = BoardConverter.class)
   @Column(columnDefinition = "TEXT")
   private List<List<Integer>> board;
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private GameStatus status;
 
@@ -36,6 +41,7 @@ public class GameEntity {
 
   public GameEntity(
       UUID id,
+      Instant timestamp,
       List<List<Integer>> board,
       GameStatus status,
       UUID currentTurn,
@@ -43,6 +49,7 @@ public class GameEntity {
       UUID xPlayerId,
       UUID oPlayerId) {
     this.gameId = id;
+    this.timestamp = timestamp;
     this.board = board;
     this.status = status;
     this.currentTurn = currentTurn;
@@ -105,5 +112,13 @@ public class GameEntity {
 
   public void setoPlayerId(UUID oPlayerId) {
     this.oPlayerId = oPlayerId;
+  }
+
+  public Instant getTimestamp() {
+    return timestamp;
+  }
+
+  public void setTimestamp(Instant timestamp) {
+    this.timestamp = timestamp;
   }
 }

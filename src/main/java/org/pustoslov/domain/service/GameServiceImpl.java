@@ -12,7 +12,9 @@ import org.pustoslov.domain.exception.GameNotFoundException;
 import org.pustoslov.domain.exception.IllegalMoveException;
 import org.pustoslov.domain.exception.NoAccessException;
 import org.pustoslov.domain.model.*;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GameServiceImpl implements GameService {
   private final GameRepository gameRepository;
   private final UserRepository userRepository;
@@ -57,6 +59,13 @@ public class GameServiceImpl implements GameService {
         gameRepository
             .findById(gameId)
             .orElseThrow(() -> new GameNotFoundException("There is no game with id: " + gameId)));
+  }
+
+  @Override
+  public List<Game> findFinishedGamesById(UUID id) {
+    return gameRepository.findFinishedGamesByParticipant(id).stream()
+        .map(gameDatasourceMapper::toDomain)
+        .toList();
   }
 
   @Override
@@ -132,6 +141,11 @@ public class GameServiceImpl implements GameService {
     game.setCurrentTurn(game.getXPlayerId());
     gameRepository.save(gameDatasourceMapper.toDataEntity(game));
     return game;
+  }
+
+  @Override
+  public List<RatingStats> getTopPlayers(int limit) {
+    return gameRepository.findTopPlayersByWinRatio(limit);
   }
 
   public void validateMove(int row, int col, UUID userId, Game game) {
