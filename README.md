@@ -79,11 +79,11 @@ This API uses JWT Auth. All endpoints except `/auth/**` require Bearer Token hea
 
 #### Game Management
 
-| Method | Endpoint | Description | Parameters | Request Body | Response | Status Codes |
-|--------|----------|-------------|------------|--------------|----------|--------------|
-| **POST** | `/game/new` | Create new game | `mode` (query) - Game mode | None | `GameResponse` | 200 - Success<br>400 - Invalid mode<br>401 - Unauthorized |
-| **POST** | `/game/{gameId}/join` | Join existing game | `gameId` (path) - Game UUID | None | `GameResponse` | 200 - Success<br>404 - Game not found<br>409 - Cannot join game |
-| **POST** | `/game/{gameId}/move` | Make a move in game | `gameId` (path) - Game UUID | `MoveRequest` | None | 200 - Success<br>400 - Invalid move<br>404 - Game not found |
+| Method | Endpoint              | Description         | Parameters                   | Request Body  | Response | Status Codes |
+|--------|-----------------------|---------------------|------------------------------|---------------|----------|--------------|
+| **POST** | `/game/new`           | Create new game     | `mode` (query) - Game mode   | None          | `GameResponse` | 200 - Success<br>400 - Invalid mode<br>401 - Unauthorized |
+| **POST** | `/game/{gameId}/join` | Join existing game  | `gameId` (path) - Game UUID  | None          | `GameResponse` | 200 - Success<br>404 - Game not found<br>409 - Cannot join game |
+| **POST** | `/game/{gameId}/move` | Make a move in game | `gameId` (path) - Game UUID  | `MoveRequest` | None | 200 - Success<br>400 - Invalid move<br>404 - Game not found |
 
 #### Game Information
 
@@ -103,11 +103,11 @@ This API uses JWT Auth. All endpoints except `/auth/**` require Bearer Token hea
 
 #### Auth Management
 
-| Method   | Endpoint                    | Description         | Parameters | Response      | Status Codes                                 |
-|----------|-----------------------------|---------------------|------------|---------------|----------------------------------------------|
-| **POST** | `/auth/signup`              | Sign up             | None       | None          | 200 - Success<br>422 - User already exists   |
-| **POST** | `/auth/login`               | Log in              | None       | None          | 200 - Success<br><br>401 - Validation error  |
-| **POST** | `/auth/update_access_token` | Update access token | None       | `JwtResponse` | 200 - Success<br><br>401 - Validation error  |
+| Method   | Endpoint                    | Description         | Parameters | Request Body         | Response      | Status Codes                                 |
+|----------|-----------------------------|---------------------|------------|----------------------|---------------|----------------------------------------------|
+| **POST** | `/auth/signup`              | Sign up             | None       | `JwtRequest`         | `JwtResponse` | 200 - Success<br>422 - User already exists   |
+| **POST** | `/auth/login`               | Log in              | None       | `JwtRequest`         | `JwtResponse` | 200 - Success<br><br>401 - Validation error  |
+| **POST** | `/auth/update_access_token` | Update access token | None       | `RefreshJwtRequest`  | `JwtResponse` | 200 - Success<br><br>401 - Validation error  |
 
 ### Request/Response Models
 

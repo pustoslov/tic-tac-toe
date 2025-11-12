@@ -9,8 +9,8 @@ import org.pustoslov.domain.model.Game;
 import org.pustoslov.domain.model.GameMode;
 import org.pustoslov.domain.service.GameService;
 import org.pustoslov.web.mapper.GameWebMapper;
-import org.pustoslov.web.model.responses.GameResponse;
 import org.pustoslov.web.model.requests.MoveRequest;
+import org.pustoslov.web.model.responses.GameResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -92,10 +92,4 @@ public class GameController {
     return ResponseEntity.ok(
         gameService.findFinishedGamesById(id).stream().map(gameMapper::toDTO).toList());
   }
-
-  //  @ExceptionHandler(IllegalArgumentException.class)
-  //  public ResponseEntity<ErrorResponse> handleTypeMismatch(IllegalArgumentException ex) {
-  //    String message = "Argument type mismatch";
-  //    return ResponseEntity.badRequest().body(new ErrorResponse("Illegal argument", message));
-  //  }
 }
